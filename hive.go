@@ -701,102 +701,53 @@ func (c *Cursor) RowMap(ctx context.Context) map[string]interface{} {
 	m := make(map[string]interface{}, len(c.queue))
 	for i := 0; i < len(c.queue); i++ {
 		columnName := d[i][0]
-		columnType := d[i][1]
-		if columnType == "BOOLEAN_TYPE" {
+		if c.queue[i].IsSetBoolVal() {
 			if isNull(c.queue[i].BoolVal.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].BoolVal.Values[c.columnIndex]
 			}
-		} else if columnType == "TINYINT_TYPE" {
+		} else if c.queue[i].IsSetByteVal() {
 			if isNull(c.queue[i].ByteVal.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].ByteVal.Values[c.columnIndex]
 			}
-		} else if columnType == "SMALLINT_TYPE" {
+		} else if c.queue[i].IsSetI16Val() {
 			if isNull(c.queue[i].I16Val.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].I16Val.Values[c.columnIndex]
 			}
-		} else if columnType == "INT_TYPE" {
+		} else if c.queue[i].IsSetI32Val() {
 			if isNull(c.queue[i].I32Val.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].I32Val.Values[c.columnIndex]
 			}
-		} else if columnType == "BIGINT_TYPE" {
+		} else if c.queue[i].IsSetI64Val() {
 			if isNull(c.queue[i].I64Val.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].I64Val.Values[c.columnIndex]
 			}
-		} else if columnType == "FLOAT_TYPE" {
+		} else if c.queue[i].IsSetDoubleVal() {
 			if isNull(c.queue[i].DoubleVal.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].DoubleVal.Values[c.columnIndex]
 			}
-		} else if columnType == "DOUBLE_TYPE" {
-			if isNull(c.queue[i].DoubleVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].DoubleVal.Values[c.columnIndex]
-			}
-		} else if columnType == "STRING_TYPE" || columnType == "VARCHAR_TYPE" || columnType == "CHAR_TYPE" {
+		} else if c.queue[i].IsSetStringVal() {
 			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
 			}
-		} else if columnType == "TIMESTAMP_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "DATE_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "BINARY_TYPE" {
+		} else if c.queue[i].IsSetBinaryVal() {
 			if isNull(c.queue[i].BinaryVal.Nulls, c.columnIndex) {
 				m[columnName] = nil
 			} else {
 				m[columnName] = c.queue[i].BinaryVal.Values[c.columnIndex]
-			}
-		} else if columnType == "ARRAY_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "MAP_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "STRUCT_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "UNION_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
-			}
-		} else if columnType == "DECIMAL_TYPE" {
-			if isNull(c.queue[i].StringVal.Nulls, c.columnIndex) {
-				m[columnName] = nil
-			} else {
-				m[columnName] = c.queue[i].StringVal.Values[c.columnIndex]
 			}
 		}
 	}
@@ -808,7 +759,7 @@ func (c *Cursor) RowMap(ctx context.Context) map[string]interface{} {
 }
 
 // FetchOne returns one row and advances the cursor one
-func (c *Cursor) FetchOne(ctx context.Context, dests ...interface{}) {
+func (c *Cursor) FetchOne(ctx context.Context, dests []interface{}) {
 	c.Err = nil
 	c.fetchIfEmpty(ctx)
 	if c.Err != nil {
